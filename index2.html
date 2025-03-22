@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro Timer - Log View</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Overall Page Styling */
+    body {
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    /* Logo Styling */
+    #logo {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+    /* Timer (if needed) */
+    #timer {
+      font-size: 48px;
+      margin: 20px;
+    }
+    /* Button Styling */
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #ff1a1a;
+    }
+    /* Log Container */
+    #log-container {
+      margin-top: 20px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .log-day {
+      background-color: #ffffff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .log-day h3 {
+      margin: 0;
+      padding: 10px;
+    }
+    .pomodoro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(25px, 1fr));
+      gap: 5px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .pomodoro-dot {
+      width: 20px;
+      height: 20px;
+      background-color: green;
+      border-radius: 50%;
+    }
+    .pomodoro-count {
+      font-weight: bold;
+      padding-top: 10px;
+    }
+    /* Celebration Messages: Simple color styling */
+    .good-stuff { color: blue; }
+    .amazing-work { color: purple; }
+    .path-to-success { color: orange; }
+    .that-guy { color: red; font-weight: bold; }
+    .still-work { color: grey; }
+  </style>
+</head>
+<body>
+  <img id="logo" src="pomodorsi.webp" alt="Pomodoro Timer Logo">
+  <h1>Pomodoro Timer - Log View</h1>
+  <h2>Completed Pomodoros by Day</h2>
+  <div id="log-container"></div>
+
+  <script>
+    function displayLogsByDay() {
+      fetch("http://127.0.0.1:5000/logs")
+        .then(response => response.json())
+        .then(data => {
+          const logContainer = document.getElementById("log-container");
+          logContainer.innerHTML = "";
+          
+          const logsByDay = {};
+          data.logs.forEach(entry => {
+            const [date, time] = entry.split(" - ");
+            if (!logsByDay[date]) logsByDay[date] = [];
+            logsByDay[date].push(time);
+          });
+          
+          Object.keys(logsByDay).reverse().forEach(date => {
+            const dayDiv = document.createElement("div");
+            dayDiv.classList.add("log-day");
+            
+            const heading = document.createElement("h3");
+            heading.textContent = date;
+            dayDiv.appendChild(heading);
+
+            const pomodoroGrid = document.createElement("div");
+            pomodoroGrid.classList.add("pomodoro-grid");
+            logsByDay[date].forEach(() => {
+              const dot = document.createElement("div");
+              dot.classList.add("pomodoro-dot");
+              pomodoroGrid.appendChild(dot);
+            });
+            dayDiv.appendChild(pomodoroGrid);
+
+            const countContainer = document.createElement("div");
+            countContainer.style.display = "flex";
+            countContainer.style.alignItems = "center";
+            
+            const count = document.createElement("span");
+            count.classList.add("pomodoro-count");
+            count.textContent = `Total: ${logsByDay[date].length}`;
+            countContainer.appendChild(count);
+            
+            const celebration = document.createElement("span");
+            if (logsByDay[date].length >= 20) {
+              celebration.textContent = "🔥 You Are That Guy! 🔥";
+              celebration.classList.add("that-guy");
+            } else if (logsByDay[date].length >= 16) {
+              celebration.textContent = "💪 Path to Success!";
+              celebration.classList.add("path-to-success");
+            } else if (logsByDay[date].length >= 12) {
+              celebration.textContent = "🌟 Amazing Work!";
+              celebration.classList.add("amazing-work");
+            } else if (logsByDay[date].length > 8) {
+              celebration.textContent = "👍 Good Stuff!";
+              celebration.classList.add("good-stuff");
+            } else {
+              celebration.textContent = "⚠️ Still Work to Do";
+              celebration.classList.add("still-work");
+            }
+            countContainer.appendChild(celebration);
+            
+            dayDiv.appendChild(countContainer);
+            logContainer.appendChild(dayDiv);
+          });
+        })
+        .catch(err => console.error("❌ Error fetching logs:", err));
+    }
+
+    setInterval(displayLogsByDay, 5000);
+    displayLogsByDay();
+  </script>
+</body>
+</html>

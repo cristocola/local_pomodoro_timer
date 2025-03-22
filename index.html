@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pomodoro Timer</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!-- Google Fonts (professional sans-serif) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Overall Body Styling with a subtle gradient background */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Main Container Card with elevated look */
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 1s ease-in;
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo styling with hover effect */
+        #logo {
+            width: 200px;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        #logo:hover {
+            transform: scale(1.05);
+        }
+
+        /* Header styling with subtle text shadow */
+        h1 {
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Timer Display with smooth color transitions */
+        #timer {
+            font-size: 48px;
+            margin: 20px;
+            transition: color 0.5s;
+        }
+
+        /* Button Styling with gradient and hover transitions */
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(145deg, #007bff, #0056b3);
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Input Labels */
+        label {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+
+        /* Link Button Styling */
+        a.button-link {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            background: linear-gradient(145deg, #007bff, #0056b3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        a.button-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Log Container to show only three items at a time */
+        .log-container {
+            margin-top: 20px;
+            max-height: 90px;
+            /* Approximately three items */
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Log List Styling */
+        #log {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #log li {
+            padding: 5px 10px;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* Pomodoro Visual Dots with a pulse animation */
+        #pomodoro-visual {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pomodoro-dot {
+            width: 15px;
+            height: 15px;
+            background-color: green;
+            border-radius: 50%;
+            margin: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Reward Quote Styling */
+        #reward-quote {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #e9f7ef;
+            border: 1px solid #d4edda;
+            border-radius: 5px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        /* Productivity Quote Box with fade in/out transitions */
+        #quote-box {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img id="logo" src="pomodorsi.webp" alt="Pomodoro Timer Logo">
+        <h1>Pomodoro Timer</h1>
+        <div>
+            <label>Pomodoro Length (minutes): <input type="number" id="pomodoroLength" value="25" min="1"></label>
+            <label>Break Length (minutes): <input type="number" id="breakLength" value="5" min="1"></label>
+            <label>Alarm Length (seconds): <input type="number" id="alarmLength" value="7" min="1"></label>
+            <div class="volume-control">
+                <label for="alarmVolume">Alarm volume:</label>
+                <input type="range" id="alarmVolume" name="volume" min="0" max="10" value="5"
+                    oninput="document.getElementById('volumeValue').textContent = this.value;">
+            </div>
+            <span id="volumeValue">5</span>
+
+        </div>
+        <br>
+        <a class="button-link" href="index2.html" target="_blank">View Log History</a>
+        <div id="timer">25:00</div>
+        <div>
+            <button onclick="startPomodoro()">Start Work</button>
+            <button onclick="startBreak()">Start Break</button>
+            <button onclick="resetTimer()">Reset</button>
+            <button onclick="finishEarly()">Finish Early</button>
+            <button onclick="startpauseTimer()">Pause</button>
+            <button onclick="deleteLastLog()">Delete last log</button>
+        </div>
+        <h2>Completed Pomodoros</h2>
+        <label>
+            <input type="checkbox" id="showTodayOnly" checked onchange="displayLog()"> Show Only Today's Logs
+        </label>
+        <!-- Log container with scrolling effect -->
+        <div class="log-container">
+            <ul id="log"></ul>
+        </div>
+        <h2>Today's Progress</h2>
+        <div id="pomodoro-visual"></div>
+        <!-- Container for reward quotes -->
+        <div id="reward-quote"></div>
+        <!-- Productivity Quote Box -->
+        <div id="quote-box">"The secret of getting ahead is getting started." – Mark Twain</div>
+    </div>
+
+    <audio id="alarm-sound" src="alarm.mp3"></audio>
+
+    <script>
+        let timerInterval;
+        let isRunning = false;
+        let isBreak = false;
+        let globalrem = 25; // Default to 25 minutes
+
+        const alarmSound = document.getElementById("alarm-sound");
+
+
+
+        function getPomodoroLength() {
+            return document.getElementById("pomodoroLength").value * 60;
+        }
+
+        function getBreakLength() {
+            return document.getElementById("breakLength").value * 60;
+        }
+
+        function getAlarmLength() {
+            return document.getElementById("alarmLength").value * 1000;
+        }
+        function getAlarmVolume() {
+            return document.getElementById("alarmVolume").value;
+        }
+
+        function playAlarm() {
+            alarmSound.currentTime = 0;
+            alarmSound.volume = getAlarmVolume() / 10;
+            alarmSound.play();
+            setTimeout(() => alarmSound.pause(), getAlarmLength());
+        }
+
+        function startpauseTimer() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timerInterval);
+                document.getElementById("pomodoroLength").value = globalrem / 60;
+
+
+                updateDisplay(globalrem);
+            }
+            /*
+        else if (!isRunning) {
+            isBreak = false;
+            startTimer(getPomodoroLength());
+        }
+            */
+
+        }
+
+        function startPomodoro() {
+            isBreak = false;
+            startTimer(getPomodoroLength());
+        }
+
+        function startBreak() {
+            isBreak = true;
+            startTimer(getBreakLength());
+        }
+
+        function startTimer(duration) {
+            if (!isRunning) {
+                isRunning = true;
+                const startTime = Date.now();
+                timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const remaining = duration - elapsed;
+                    globalrem = remaining;
+                    if (remaining > 0) {
+                        updateDisplay(remaining);
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        updateDisplay(0);
+                        playAlarm();
+
+                        if (!isBreak) {
+                            logPomodoro();
+                        }
+                    }
+                }, 250);
+            }
+        }
+
+
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            document.getElementById("pomodoroLength").value = 25;
+            updateDisplay(getPomodoroLength());
+        }
+
+        function finishEarly() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            if (!isBreak) {
+                logPomodoro();
+            }
+            playAlarm();
+            updateDisplay(getPomodoroLength());
+        }
+
+        // Update the timer display and change text color when time is low
+        function updateDisplay(time) {
+            let minutes = Math.floor(time / 60);
+            let seconds = time % 60;
+            const timerElement = document.getElementById("timer");
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timerElement.style.color = time <= 10 ? "red" : "#333";
+        }
+
+        // Log the pomodoro completion to the server
+        function logPomodoro() {
+            let now = new Date();
+            let logEntry = `${now.toLocaleDateString()} - ${now.toLocaleTimeString()}`;
+            fetch("http://127.0.0.1:5000/log", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ logEntry })
+            })
+                .then(() => {
+                    displayLog();
+                    updatePomodoroVisual();
+                })
+                .catch(err => console.error("❌ Error sending log:", err));
+        }
+
+
+        function deleteLastLog() {
+            let now = new Date();
+            let logEntry = `${now.toLocaleDateString()} - ${now.toLocaleTimeString()}`;
+            fetch("http://127.0.0.1:5000/delete-last-log", {
+                method: "POST"
+            })
+                .then(() => console.log("✅ Last log deleted"))
+                .catch(err => console.error("❌ Error sending last log:", err));
+        }
+        // Fetch and display logs with the scrolling effect
+        function displayLog() {
+            fetch("http://127.0.0.1:5000/logs")
+                .then(response => response.json())
+                .then(data => {
+                    let logElement = document.getElementById("log");
+                    let showTodayOnly = document.getElementById("showTodayOnly").checked;
+                    let today = new Date().toLocaleDateString();
+                    logElement.innerHTML = "";
+
+                    let filteredLogs = showTodayOnly ? data.logs.filter(log => log.includes(today)) : data.logs;
+
+                    if (filteredLogs.length === 0) {
+                        logElement.innerHTML = "<li>No completed pomodoros yet.</li>";
+                    } else {
+                        filteredLogs.forEach(entry => {
+                            let li = document.createElement("li");
+                            li.textContent = entry;
+                            logElement.appendChild(li);
+                        });
+                    }
+                    animateLogScroll();
+                    updatePomodoroVisual();
+                })
+                .catch(err => console.error("❌ Error fetching logs:", err));
+        }
+
+        // Animate the log container's scroll if content overflows
+        function animateLogScroll() {
+            const container = document.querySelector('.log-container');
+            if (!container) return;
+            container.scrollTop = 0;
+            clearInterval(window.logScrollInterval);
+            window.logScrollInterval = setInterval(() => {
+                container.scrollTop += 1;
+                if (container.scrollTop >= container.scrollHeight - container.clientHeight) {
+                    container.scrollTop = 0;
+                }
+            }, 50);
+        }
+
+        // Update the pomodoro visual dots and reward message
+        function updatePomodoroVisual() {
+            let now = new Date().toLocaleDateString();
+            fetch("http://127.0.0.1:5000/logs")
+                .then(response => response.json())
+                .then(data => {
+                    let todayLogs = data.logs.filter(log => log.includes(now));
+                    let visualContainer = document.getElementById("pomodoro-visual");
+                    visualContainer.innerHTML = "";
+                    todayLogs.forEach(() => {
+                        let dot = document.createElement("div");
+                        dot.classList.add("pomodoro-dot");
+                        visualContainer.appendChild(dot);
+                    });
+
+                    let rewardMessage = '';
+                    let count = todayLogs.length;
+                    if (count >= 20) {
+                        rewardMessage = "Incredible achievement! 20 pomodoros: Success is yours, keep going!";
+                    } else if (count >= 16) {
+                        rewardMessage = "Outstanding work! 16 pomodoros: You're unstoppable on your journey!";
+                    } else if (count >= 12) {
+                        rewardMessage = "Amazing effort! 12 pomodoros: Keep pushing, you're on fire!";
+                    } else if (count >= 8) {
+                        rewardMessage = "Great job! 8 pomodoros: Your dedication is paving the path to success!";
+                    }
+                    document.getElementById("reward-quote").textContent = rewardMessage;
+                })
+                .catch(err => console.error("❌ Error fetching logs:", err));
+        }
+
+        // Productivity Quote Box functionality
+        const quotes = [
+            "The secret of getting ahead is getting started. – Mark Twain",
+            "Productivity is being able to do things that you were never able to do before. – Franz Kafka",
+            "It always seems impossible until it's done. – Nelson Mandela",
+            "The way to get started is to quit talking and begin doing. – Walt Disney",
+            "Focus on being productive instead of busy. – Tim Ferriss"
+        ];
+        let currentQuoteIndex = 0;
+        function cycleQuotes() {
+            const quoteBox = document.getElementById('quote-box');
+            quoteBox.classList.add('fade-out');
+            setTimeout(() => {
+                quoteBox.textContent = quotes[currentQuoteIndex];
+                quoteBox.classList.remove('fade-out');
+                quoteBox.classList.add('fade-in');
+                currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            }, 500);
+            setTimeout(() => {
+                quoteBox.classList.remove('fade-in');
+            }, 1500);
+        }
+        setInterval(cycleQuotes, 5000);
+
+        // Periodically update the log display
+        setInterval(displayLog, 5000);
+        updateDisplay(getPomodoroLength());
+        displayLog();
+    </script>
+</body>
+
+</html>

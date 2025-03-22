@@ -1,0 +1,30 @@
+<job>
+  <script language="VBScript">
+    Set WshShell = CreateObject("WScript.Shell")
+    Set FSO = CreateObject("Scripting.FileSystemObject")
+
+    scriptDir = FSO.GetParentFolderName(WScript.ScriptFullName)
+    serverURL = "http://127.0.0.1:8000/index.html"
+
+    Function IsServerRunning(url)
+        On Error Resume Next
+        Set http = CreateObject("MSXML2.XMLHTTP")
+        http.Open "GET", url, False
+        http.Send
+        If http.Status = 200 Then
+            IsServerRunning = True
+        Else
+            IsServerRunning = False
+        End If
+        Set http = Nothing
+        On Error GoTo 0
+    End Function
+
+    If Not IsServerRunning(serverURL) Then
+        WshShell.Run "pythonw.exe """ & scriptDir & "\server.py""", 0, False
+        WScript.Sleep 2000
+    End If
+
+    WshShell.Run serverURL, 1, False
+  </script>
+</job>
