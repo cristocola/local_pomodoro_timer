@@ -22,7 +22,7 @@
 
     If Not IsServerRunning(serverURL) Then
         WshShell.Run "pythonw.exe """ & scriptDir & "\server.py""", 0, False
-        WScript.Sleep 2000
+        'WScript.Sleep 2000
     End If
 
     WshShell.Run serverURL, 1, False
