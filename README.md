@@ -1,159 +1,213 @@
-🍅 Local Pomodoro Timer
+# 🍅 Local Pomodoro Timer
+
 A fully offline Pomodoro productivity tracker that runs entirely on your machine. No internet, no cloud—just local work with a beautiful UI, local logging via SQLite, and easy management via a system tray icon.
 
-Overview
+---
+
+## Overview
+
 This project provides a simple, visually appealing Pomodoro timer with the following features:
 
-Interactive Timer: Adjust Pomodoro, break, and alarm durations.
+- **Interactive Timer:** Adjust Pomodoro, break, and alarm durations.
+    
+- **Animated UI:** Smooth animations, motivational quotes, and a modern design.
+    
+- **Local Logging:** Completed pomodoros are recorded into a local SQLite database.
+    
+- **Dual Interface:**
+    
+    - `index.html`: Main timer interface.
+        
+    - `index2.html`: Detailed log history showing daily pomodoro counts.
+        
+- **Backend Services:**
+    
+    - A static file server (port 8000) for serving the web files.
+        
+    - A Flask API server (port 5000) for logging operations.
+        
+- **System Tray Integration:** Control the app from the system tray.
+    
+- **One-Click Launch:** A VBScript (`start_pomodoro.wsf`) that starts the server and opens your browser.
+    
 
-Animated UI: Smooth animations, motivational quotes, and a modern design.
+---
 
-Local Logging: Completed pomodoros are recorded into a local SQLite database.
+## Folder Structure
 
-Dual Interface:
-
-index.html: Main timer interface.
-
-index2.html: Detailed log history showing daily pomodoro counts.
-
-Backend Services:
-
-A static file server (port 8000) for serving the web files.
-
-A Flask API server (port 5000) for logging operations.
-
-System Tray Integration: Control the app from the system tray.
-
-One-Click Launch: A VBScript (start_pomodoro.wsf) that starts the server and opens your browser.
-
-Folder Structure
-local_pomodoro_timer/
-    - alarm.mp3               # Alarm sound file
-    - favicon.ico             # Web favicon
-    - gene_m34_icon.ico       # Alternate icon (optional)
-    - icon.png                # Tray icon image
-    - index.html              # Main Pomodoro timer UI
-    - index2.html             # Log history page
-    - Pomodoro Timer.lnk      # Windows shortcut (if used)
-    - pomodoro_logs.db        # SQLite database for logs
-    - pomodorsi.webp          # Logo image for the UI
-    - server.py               # Python backend (static server + Flask API + system tray)
+local_pomodoro_timer/  
+    - alarm.mp3               # Alarm sound file  
+    - favicon.ico             # Web favicon  
+    - gene_m34_icon.ico       # Alternate icon (optional)  
+    - icon.png                # Tray icon image  
+    - index.html              # Main Pomodoro timer UI  
+    - index2.html             # Log history page  
+    - Pomodoro Timer.lnk      # Windows shortcut (if used)  
+    - pomodoro_logs.db        # SQLite database for logs  
+    - pomodorsi.webp          # Logo image for the UI  
+    - server.py               # Python backend (static server + Flask API + system tray)  
     - start_pomodoro.wsf      # VBScript-based launcher
 
-How It Works
-Frontend
-index.html:
-The main user interface for the timer. Set your desired durations, start/pause the timer, and see motivational quotes. It uses JavaScript (via fetch calls) to communicate with the backend for logging completed pomodoros.
+---
 
-index2.html:
-Displays a detailed log history with daily pomodoro counts.
+## How It Works
 
-Backend (server.py)
-Static File Server (Port 8000):
-Uses a custom handler to securely serve your HTML, CSS, and media files, preventing directory listing.
+### Frontend
 
-Flask API Server (Port 5000):
-Provides these endpoints:
+- **index.html:**  
+    The main user interface for the timer. Set your desired durations, start/pause the timer, and see motivational quotes. It uses JavaScript (via fetch calls) to communicate with the backend for logging completed pomodoros.
+    
+- **index2.html:**  
+    Displays a detailed log history with daily pomodoro counts.
+    
 
-POST /log – Save a new log entry.
+### Backend (`server.py`)
 
-GET /logs – Retrieve all log entries.
+- **Static File Server (Port 8000):**  
+    Uses a custom handler to securely serve your HTML, CSS, and media files, preventing directory listing.
+    
+- **Flask API Server (Port 5000):**  
+    Provides these endpoints:
+    
+    - `POST /log` – Save a new log entry.
+        
+    - `GET /logs` – Retrieve all log entries.
+        
+    - `POST /delete-last-log` – Delete the most recent log entry.
+        
+- **System Tray Integration:**  
+    Utilizes `pystray` and `Pillow` to display a tray icon, allowing you to exit the application gracefully.
+    
 
-POST /delete-last-log – Delete the most recent log entry.
+### Launcher (`start_pomodoro.wsf`)
 
-System Tray Integration:
-Utilizes pystray and Pillow to display a tray icon, allowing you to exit the application gracefully.
+- Checks if the server is running.
+    
+- Starts `server.py` if needed.
+    
+- Opens your default web browser at `http://127.0.0.1:8000/index.html`.
+    
 
-Launcher (start_pomodoro.wsf)
-Checks if the server is running.
+---
 
-Starts server.py if needed.
+## Installation
 
-Opens your default web browser at http://127.0.0.1:8000/index.html.
+### Prerequisites
 
-Installation
-Prerequisites
-Python 3.x must be installed.
+- **Python 3.x** must be installed.
+    
+- Git is installed and configured.
+    
 
-Git is installed and configured.
+### Steps to Set Up
 
-Steps to Set Up
-Clone the Repository (if you haven't already):
+1. **Clone the Repository** (if you haven't already):
+    
+    bash
+    
+    Copy
+    
+    `git clone https://github.com/cristocola/local_pomodoro_timer.git cd local_pomodoro_timer`
+    
+2. **(Optional) Create and Activate a Virtual Environment:**
+    
+    - **Windows:**
+        
+        bash
+        
+        Copy
+        
+        `python -m venv venv venv\Scripts\activate`
+        
+    - **macOS/Linux:**
+        
+        bash
+        
+        Copy
+        
+        `python -m venv venv source venv/bin/activate`
+        
+3. **Install Dependencies:**
+    
+    Create a file named `requirements.txt` with the following content:
+    
+    ini
+    
+    Copy
+    
+    `Flask==2.2.2 pystray==0.17.3 Pillow==9.4.0`
+    
+    Then run:
+    
+    bash
+    
+    Copy
+    
+    `pip install -r requirements.txt`
+    
+4. **Start the Application:**
+    
+    - Double-click `start_pomodoro.wsf`  
+        **OR**
+        
+    - Run in the terminal:
+        
+        bash
+        
+        Copy
+        
+        `python server.py`
+        
+    - Then, open your browser at:
+        
+        arduino
+        
+        Copy
+        
+        `http://127.0.0.1:8000/index.html`
+        
 
-bash
-Copy
-git clone https://github.com/cristocola/local_pomodoro_timer.git
-cd local_pomodoro_timer
-(Optional) Create and Activate a Virtual Environment:
+---
 
-Windows:
+## Usage
 
-bash
-Copy
-python -m venv venv
-venv\Scripts\activate
-macOS/Linux:
+- **Start a Pomodoro Session:**  
+    Set your desired durations in the UI and click the appropriate buttons to start, pause, reset, or finish your pomodoro.
+    
+- **View Logs:**  
+    Click the "View Log History" link in the UI to open `index2.html` and see your daily progress.
+    
+- **Exit the Application:**  
+    Use the system tray icon to exit the application gracefully.
+    
 
-bash
-Copy
-python -m venv venv
-source venv/bin/activate
-Install Dependencies:
+---
 
-Create a file named requirements.txt with the following content:
+## Future Enhancements
 
-ini
-Copy
-Flask==2.2.2
-pystray==0.17.3
-Pillow==9.4.0
-Then run:
+- CSV export of logs.
+    
+- Graphical statistics of daily/weekly progress.
+    
+- Packaging as a desktop executable.
+    
+- Theme toggle (dark/light mode).
+    
+- Desktop notifications for session events.
+    
 
-bash
-Copy
-pip install -r requirements.txt
-Start the Application:
+---
 
-Double-click start_pomodoro.wsf
-OR
+## Privacy
 
-Run in the terminal:
+- All data is stored locally in `pomodoro_logs.db`.
+    
+- The app runs entirely on `127.0.0.1` with no external data transmission.
+    
 
-bash
-Copy
-python server.py
-Then, open your browser at:
+---
 
-arduino
-Copy
-http://127.0.0.1:8000/index.html
-Usage
-Start a Pomodoro Session:
-Set your desired durations in the UI and click the appropriate buttons to start, pause, reset, or finish your pomodoro.
+## Author
 
-View Logs:
-Click the "View Log History" link in the UI to open index2.html and see your daily progress.
-
-Exit the Application:
-Use the system tray icon to exit the application gracefully.
-
-Future Enhancements
-CSV export of logs.
-
-Graphical statistics of daily/weekly progress.
-
-Packaging as a desktop executable.
-
-Theme toggle (dark/light mode).
-
-Desktop notifications for session events.
-
-Privacy
-All data is stored locally in pomodoro_logs.db.
-
-The app runs entirely on 127.0.0.1 with no external data transmission.
-
-Author
-Cristo Cola
+**Cristo Cola**  
 Built with passion and lots of pomodoros.
-
